@@ -8,8 +8,10 @@
     }
 
     $app = new Silex\Application();
-
-    $app->get("/", function() {
+    $app->register(new Silex\Provider\TwigServiceProvider(), array(
+    'twig.path' => __DIR__.'/../views'
+    ));
+    $app->get("/", function() use ($app) {
 
         return "
         <!DOCTYPE html>
@@ -34,27 +36,13 @@
         </html>";
     });
 
-    $app->get("/cities", function() {
+    $app->get("/cities", function() use ($app) {
         $city = new Place($_GET['city']);
         $city->save();
-        $return_string = "<!DOCTYPE html>
-                <html>
-                <head>
-                    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css'>
-                    <title>I've been to so many rectangles!</title>
-                </head>
-                <body>
-                    <ul>";
-        foreach ($_SESSION['cities'] as $city) {
-            $return_string .= "<li>" . $city->getCity() . "</li>";
-        }
-        $return_string .= "
-            </ul>
-            </body>
-            </html>
-            ";
+        $places = $_SESSION['cities'];
+        // return var_dump($cities);
 
-        return $return_string;
+        return $app['twig']->render('cities.html.twig', array('places' => $places));
     });
 
     return $app;
