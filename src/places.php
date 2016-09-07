@@ -22,5 +22,10 @@
         {
             array_push($_SESSION['cities'], $this);
         }
+
+        static function getAll()
+        {
+            return $_SESSION['cities'];
+        }
     }
  ?>
